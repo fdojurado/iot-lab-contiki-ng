@@ -1,0 +1,4 @@
+[submodule "Contiki-NG-SDWSN"]
+	path = Contiki-NG-SDWSN
+	url = git@github.com:fdojurado/Contiki-NG-SDWSN.git
+	branch = Dev
