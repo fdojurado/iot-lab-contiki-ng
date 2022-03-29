@@ -1,4 +1,3 @@
-[submodule "contiki-ng"]
-  path = contiki-ng
-  branch = develop
-  url = https://github.com/contiki-ng/contiki-ng.git
+[submodule "Contiki-NG-SDWSN"]
+	path = Contiki-NG-SDWSN
+	url = git@github.com:fdojurado/Contiki-NG-SDWSN.git
