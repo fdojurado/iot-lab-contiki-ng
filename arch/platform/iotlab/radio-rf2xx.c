@@ -545,6 +545,10 @@ get_value(radio_param_t param, radio_value_t *value)
   case RADIO_CONST_MAX_PAYLOAD_LEN:
     *value = RF2XX_MAX_PAYLOAD;
     return RADIO_RESULT_OK;
+  case RADIO_PARAM_LAST_RSSI:
+    /* RSSI of the last packet received */
+    *value = rf2_last_rssi;
+    return RADIO_RESULT_OK;
   default:
     return RADIO_RESULT_NOT_SUPPORTED;
   }
@@ -944,11 +948,14 @@ static int read(uint8_t *buf, uint8_t buf_len)
     // rf2_last_correlation = 
 
     if(!poll_mode) {
+        log_error("not in poll mode"):
         /* Not in poll mode: packetbuf should not be accessed in interrupt context.
          * In poll mode, the last packet RSSI and link quality can be obtained through
          * RADIO_PARAM_LAST_RSSI and RADIO_PARAM_LAST_LINK_QUALITY */
         packetbuf_set_attr(PACKETBUF_ATTR_RSSI, rf2_last_rssi);
         // packetbuf_set_attr(PACKETBUF_ATTR_LINK_QUALITY, rf2_last_correlation);
+      }else{
+          log_error("it  is poll mode"):
       }
 
 #ifdef RF2XX_LEDS_ON
