@@ -513,14 +513,14 @@ get_channel()
   return reg & RF2XX_PHY_CC_CCA_MASK__CHANNEL;
 }
 
-static uint8_t
-get_energy_detection()
-{
-  platform_enter_critical();
-  uint8_t reg = rf2xx_reg_read(RF2XX_DEVICE, RF2XX_REG__PHY_ED_LEVEL);
-  platform_exit_critical();
-  return reg;
-}
+// static uint8_t
+// get_energy_detection()
+// {
+//   platform_enter_critical();
+//   uint8_t reg = rf2xx_reg_read(RF2XX_DEVICE, RF2XX_REG__PHY_ED_LEVEL);
+//   platform_exit_critical();
+//   return reg;
+// }
 
 static radio_result_t
 get_value(radio_param_t param, radio_value_t *value)
@@ -937,7 +937,7 @@ static int read(uint8_t *buf, uint8_t buf_len)
     }
 
     
-    rf2_last_rssi = get_energy_detection()+RSSI_OFFSET;
+    rf2_last_rssi = (rf2xx_reg_read(RF2XX_DEVICE, RF2XX_REG__PHY_RSSI)&RF2XX_PHY_RSSI_MASK__RSSI)+RSSI_OFFSET;
     /* TODO: implement the correleation */
     // rf2_last_correlation = 
 
