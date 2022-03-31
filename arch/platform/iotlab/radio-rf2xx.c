@@ -943,7 +943,7 @@ static int read(uint8_t *buf, uint8_t buf_len)
     // Read payload
     rf2xx_fifo_read_remaining(RF2XX_DEVICE, buf, len);
     
-    rf2_last_rssi = (rf2xx_reg_read(RF2XX_DEVICE, RF2XX_REG__PHY_RSSI)&RF2XX_PHY_RSSI_MASK__RSSI)+RSSI_OFFSET;
+    rf2_last_rssi = (rf2xx_reg_read(RF2XX_DEVICE, RF2XX_REG__PHY_ED_LEVEL)+RSSI_OFFSET;
     /* TODO: implement the correleation */
     // rf2_last_correlation = 
 
