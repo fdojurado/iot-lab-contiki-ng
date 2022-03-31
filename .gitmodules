@@ -1,4 +1,4 @@
 [submodule "Contiki-NG-SDWSN"]
 	path = Contiki-NG-SDWSN
 	url = https://github.com/fdojurado/Contiki-NG-SDWSN.git
-	branch = Dev
+	branch = 28-fit-iot-lab
