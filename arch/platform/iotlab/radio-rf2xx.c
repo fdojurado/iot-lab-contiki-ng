@@ -59,6 +59,13 @@ extern rf2xx_t RF2XX_DEVICE;
 #define RF2XX_RX_RSSI_THRESHOLD  RF2XX_PHY_RX_THRESHOLD__m101dBm
 #endif
 #ifndef RF2XX_SOFT_PREPARE
+
+#ifdef RF2_CONF_RSSI_OFFSET
+#define RSSI_OFFSET RF2_CONF_RSSI_OFFSET
+#else /* RF2_CONF_RSSI_OFFSET */
+/* The RSSI_OFFSET is approximate -91 (see AT86RF231 specification) */
+#define RSSI_OFFSET -91
+#endif /* RF2_CONF_RSSI_OFFSET */
 /* The RF2xx has a single FIFO for Tx and Rx.
  * - When RF2XX_SOFT_PREPARE is set, rf2xx_wr_prepare merely copies the data to be sent to a soft tx_buf.
  * rf2xx_wr_transmit will copy from tx_buf to the FIFO and then send.
@@ -99,6 +106,9 @@ static volatile int rf2xx_current_channel;
 static uint8_t volatile poll_mode = 0;
 /* SFD timestamp of last incoming packet */
 static rtimer_clock_t sfd_start_time;
+
+signed char rf2_last_rssi;
+// uint8_t rf2_last_correlation;
 
 static int read(uint8_t *buf, uint8_t buf_len);
 static void listen(void);
@@ -501,6 +511,15 @@ get_channel()
   uint8_t reg = rf2xx_reg_read(RF2XX_DEVICE, RF2XX_REG__PHY_CC_CCA);
   platform_exit_critical();
   return reg & RF2XX_PHY_CC_CCA_MASK__CHANNEL;
+}
+
+static uint8_t
+get_energy_detection()
+{
+  platform_enter_critical();
+  uint8_t reg = rf2xx_reg_read(RF2XX_DEVICE, RF2XX_REG__PHY_ED_LEVEL);
+  platform_exit_critical();
+  return reg;
 }
 
 static radio_result_t
@@ -916,6 +935,19 @@ static int read(uint8_t *buf, uint8_t buf_len)
         rf2xx_fifo_read_remaining(RF2XX_DEVICE, buf, 0);
         return 0;
     }
+
+    
+    rf2_last_rssi = get_energy_detection()+RSSI_OFFSET;
+    /* TODO: implement the correleation */
+    // rf2_last_correlation = 
+
+    if(!poll_mode) {
+        /* Not in poll mode: packetbuf should not be accessed in interrupt context.
+         * In poll mode, the last packet RSSI and link quality can be obtained through
+         * RADIO_PARAM_LAST_RSSI and RADIO_PARAM_LAST_LINK_QUALITY */
+        packetbuf_set_attr(PACKETBUF_ATTR_RSSI, rf2_last_rssi);
+        // packetbuf_set_attr(PACKETBUF_ATTR_LINK_QUALITY, rf2_last_correlation);
+      }
 
     // Read payload
     rf2xx_fifo_read_remaining(RF2XX_DEVICE, buf, len);
