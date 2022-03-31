@@ -948,14 +948,11 @@ static int read(uint8_t *buf, uint8_t buf_len)
     // rf2_last_correlation = 
 
     if(!poll_mode) {
-        log_error("not in poll mode");
         /* Not in poll mode: packetbuf should not be accessed in interrupt context.
          * In poll mode, the last packet RSSI and link quality can be obtained through
          * RADIO_PARAM_LAST_RSSI and RADIO_PARAM_LAST_LINK_QUALITY */
         packetbuf_set_attr(PACKETBUF_ATTR_RSSI, rf2_last_rssi);
         // packetbuf_set_attr(PACKETBUF_ATTR_LINK_QUALITY, rf2_last_correlation);
-      }else{
-          log_error("it  is poll mode");
       }
 
 #ifdef RF2XX_LEDS_ON
