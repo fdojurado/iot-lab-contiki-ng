@@ -936,6 +936,8 @@ static int read(uint8_t *buf, uint8_t buf_len)
         return 0;
     }
 
+    // Read payload
+    rf2xx_fifo_read_remaining(RF2XX_DEVICE, buf, len);
     
     rf2_last_rssi = (rf2xx_reg_read(RF2XX_DEVICE, RF2XX_REG__PHY_RSSI)&RF2XX_PHY_RSSI_MASK__RSSI)+RSSI_OFFSET;
     /* TODO: implement the correleation */
@@ -948,9 +950,6 @@ static int read(uint8_t *buf, uint8_t buf_len)
         packetbuf_set_attr(PACKETBUF_ATTR_RSSI, rf2_last_rssi);
         // packetbuf_set_attr(PACKETBUF_ATTR_LINK_QUALITY, rf2_last_correlation);
       }
-
-    // Read payload
-    rf2xx_fifo_read_remaining(RF2XX_DEVICE, buf, len);
 
 #ifdef RF2XX_LEDS_ON
         leds_off(LEDS_GREEN);
