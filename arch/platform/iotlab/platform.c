@@ -70,7 +70,11 @@ static void
 set_linkaddr(void)
 {
 #if LINKADDR_SIZE == 2
+#ifdef NODE_ID
+    uint16_t short_uid = NODE_ID;
+#else
     uint16_t short_uid = platform_uid();
+#endif
     linkaddr_node_addr.u8[0] = 0xff & (short_uid >> 8);
     linkaddr_node_addr.u8[1] = 0xff & (short_uid);
 #else
