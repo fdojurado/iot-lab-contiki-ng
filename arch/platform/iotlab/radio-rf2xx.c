@@ -836,6 +836,7 @@ static void reset(void)
 /*---------------------------------------------------------------------------*/
 static void
 rf2xx_set_txpower(phy_power_t power){
+    uint8_t reg;
     int rf_tx_power= convert_power(power);
     reg = RF2XX_PHY_TX_PWR_DEFAULT__PA_BUF_LT
             | RF2XX_PHY_TX_PWR_DEFAULT__PA_LT
