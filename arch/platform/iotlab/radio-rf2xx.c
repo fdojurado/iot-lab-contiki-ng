@@ -486,6 +486,16 @@ rf2xx_wr_off(void)
 }
 
 /*---------------------------------------------------------------------------*/
+static void
+rf2xx_set_txpower(phy_power_t power){
+    int rf_tx_power= convert_power(power);
+    reg = RF2XX_PHY_TX_PWR_DEFAULT__PA_BUF_LT
+            | RF2XX_PHY_TX_PWR_DEFAULT__PA_LT
+            | rf_tx_power;
+    rf2xx_reg_write(RF2XX_DEVICE, RF2XX_REG__PHY_TX_PWR, reg);
+
+}
+/*---------------------------------------------------------------------------*/
 /* Enable or disable poll mode */
 static void
 set_poll_mode(uint8_t enable)
@@ -583,6 +593,9 @@ set_value(radio_param_t param, radio_value_t value)
       return RADIO_RESULT_INVALID_VALUE;
     }
     set_channel(value);
+    return RADIO_RESULT_OK;
+  case RADIO_PARAM_TXPOWER:
+    rf2xx_set_txpower(value);
     return RADIO_RESULT_OK;
   default:
     return RADIO_RESULT_NOT_SUPPORTED;
