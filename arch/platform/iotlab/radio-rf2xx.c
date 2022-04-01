@@ -116,6 +116,7 @@ static void idle(void);
 static void reset(void);
 static void restart(void);
 static void irq_handler(handler_arg_t arg);
+static void rf2xx_set_txpower(phy_power_t power);
 
 PROCESS(rf2xx_process, "rf2xx driver");
 
@@ -484,17 +485,6 @@ rf2xx_wr_off(void)
 
     return 1;
 }
-
-/*---------------------------------------------------------------------------*/
-static void
-rf2xx_set_txpower(phy_power_t power){
-    int rf_tx_power= convert_power(power);
-    reg = RF2XX_PHY_TX_PWR_DEFAULT__PA_BUF_LT
-            | RF2XX_PHY_TX_PWR_DEFAULT__PA_LT
-            | rf_tx_power;
-    rf2xx_reg_write(RF2XX_DEVICE, RF2XX_REG__PHY_TX_PWR, reg);
-
-}
 /*---------------------------------------------------------------------------*/
 /* Enable or disable poll mode */
 static void
@@ -843,8 +833,16 @@ static void reset(void)
     reg |= (0x0F & RF2XX_RX_RSSI_THRESHOLD);
     rf2xx_reg_write(RF2XX_DEVICE, RF2XX_REG__RX_SYN, reg);
 }
+/*---------------------------------------------------------------------------*/
+static void
+rf2xx_set_txpower(phy_power_t power){
+    int rf_tx_power= convert_power(power);
+    reg = RF2XX_PHY_TX_PWR_DEFAULT__PA_BUF_LT
+            | RF2XX_PHY_TX_PWR_DEFAULT__PA_LT
+            | rf_tx_power;
+    rf2xx_reg_write(RF2XX_DEVICE, RF2XX_REG__PHY_TX_PWR, reg);
 
-
+}
 /*---------------------------------------------------------------------------*/
 
 static void idle(void)
