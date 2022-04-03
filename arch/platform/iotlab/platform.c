@@ -75,8 +75,8 @@ set_linkaddr(void)
 #else
     uint16_t short_uid = platform_uid();
 #endif
-    linkaddr_node_addr.u8[0] = 0xff & (short_uid >> 8);
-    linkaddr_node_addr.u8[1] = 0xff & (short_uid);
+    linkaddr_node_addr.u8[0] = 0xff & (short_uid);
+    linkaddr_node_addr.u8[1] = 0xff & (short_uid >> 8);
 #else
 
 #define IOTLAB_UID_ADDR 1
