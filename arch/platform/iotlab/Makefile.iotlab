@@ -22,6 +22,13 @@ BOARD ?= m3
 BOARDS = m3 a8-m3
 IOTLAB_DIR = $(ARCH_PATH)/platform/iotlab
 
+# Contiki-NG 5.1's core wildcard-compiles os/dev/{gpio-hal,button-hal,spi}.c and
+# os/sys/stack-check.c. This openlab-based platform provides none of their arch
+# backends (gpio_hal_arch_*, button_hal_buttons, spi_arch_*, the _stack linker
+# symbol) and drives its peripherals through openlab's own HAL, so these core
+# files are dead weight that only breaks the link. Exclude them for iotlab.
+MODULES_SOURCES_EXCLUDES += gpio-hal.c button-hal.c spi.c stack-check.c
+
 #### Compilation and linker flags and options ####
 
 GCCPREFIX = arm-none-eabi
@@ -126,16 +133,22 @@ CONTIKI_TARGET_SOURCEFILES +=          \
          leds.c                        \
          int-master.c                  \
          sensors.c                     \
-         slip.c                        \
          clock-systick.c               \
          watchdog.c                    \
          radio-rf2xx.c                 \
          uart1.c                       \
-         slip-arch.c                   \
          openlab-port.c                \
          rtimer-arch.c                 \
          leds-arch.c                   \
          platform-sensors.c
+
+# SLIP (serial-line IP, for border-router builds) pulls in uip_len/tcpip_input,
+# which don't exist under MAKE_NET_NULLNET (e.g. the wifi-disturber). Nothing on
+# this platform calls slip_arch_init, so only compile SLIP when an IP network
+# stack is present -- keeps NULLNET examples linkable on M3.
+ifneq ($(MAKE_NET),MAKE_NET_NULLNET)
+CONTIKI_TARGET_SOURCEFILES += slip.c slip-arch.c
+endif
 
 CONTIKI_SOURCEFILES += $(CONTIKI_TARGET_SOURCEFILES)
 

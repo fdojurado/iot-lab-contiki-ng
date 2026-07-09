@@ -49,7 +49,11 @@
  */
 
 #define CLOCK_CONF_SECOND 100
-typedef uint32_t  clock_time_t;
+/* Contiki-NG 5.1's os/sys/clock.h defines clock_time_t itself (sized by
+ * CLOCK_CONF_SIZE, default 8 = uint64_t). Older 5.x left the type to the
+ * platform, so this overlay used to `typedef uint32_t clock_time_t;` here --
+ * which now conflicts. Select the 32-bit clock and let clock.h own the typedef. */
+#define CLOCK_CONF_SIZE 4
 #define RTIMER_CONF_CLOCK_SIZE 2
 
 /* ---------------------------------------- */
