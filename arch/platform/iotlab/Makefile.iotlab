@@ -143,10 +143,12 @@ CONTIKI_TARGET_SOURCEFILES +=          \
          platform-sensors.c
 
 # SLIP (serial-line IP, for border-router builds) pulls in uip_len/tcpip_input,
-# which don't exist under MAKE_NET_NULLNET (e.g. the wifi-disturber). Nothing on
-# this platform calls slip_arch_init, so only compile SLIP when an IP network
-# stack is present -- keeps NULLNET examples linkable on M3.
-ifneq ($(MAKE_NET),MAKE_NET_NULLNET)
+# which don't exist under MAKE_NET_NULLNET (e.g. the wifi-disturber) or a custom
+# MAKE_NET_OTHER stack (e.g. SAGE's sagenet). Nothing on this platform calls
+# slip_arch_init, so only compile SLIP when the IP stack is present. MAKE_NET is
+# still empty here for default (IPv6) builds -- Makefile.include sets its default
+# after including this file -- so test for the two non-IP values explicitly.
+ifeq ($(filter MAKE_NET_NULLNET MAKE_NET_OTHER,$(MAKE_NET)),)
 CONTIKI_TARGET_SOURCEFILES += slip.c slip-arch.c
 endif
 

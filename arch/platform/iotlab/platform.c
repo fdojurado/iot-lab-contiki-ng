@@ -75,8 +75,16 @@ set_linkaddr(void)
 #else
     uint16_t short_uid = platform_uid();
 #endif
+#if IOTLAB_CONF_LINKADDR_LSB_FIRST
+    /* Low byte first, as Cooja does for LINKADDR_SIZE 2 (u8[0] = id & 0xff).
+     * Projects that hard-code 2-byte addresses this way (e.g. SAGE's static
+     * routes) need the same layout on hardware. */
+    linkaddr_node_addr.u8[0] = 0xff & (short_uid);
+    linkaddr_node_addr.u8[1] = 0xff & (short_uid >> 8);
+#else
     linkaddr_node_addr.u8[0] = 0xff & (short_uid >> 8);
     linkaddr_node_addr.u8[1] = 0xff & (short_uid);
+#endif
 #else
 
 #define IOTLAB_UID_ADDR 1
